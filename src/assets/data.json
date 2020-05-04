@@ -1,0 +1,53 @@
+{
+    "name": "Cars",
+    "usechildren": [
+        {
+            "name": "test"
+        }
+    ],
+    "children": [
+        {
+            "name": "Auto trade",
+            "children": [
+                {
+                    "name": "",
+                    "visited": true,
+                    "size": 3534
+                },
+                {
+                    "name": "",
+                    "visited": true,
+                    "size": 3534
+                },
+                {
+                    "name": "SUVs",
+                    "children": [
+                        {
+                            "name": "Ford",
+                            "size": 3534
+                        },
+                        {
+                            "name": "",
+                            "visited": true,
+                            "size": 3534
+                        },
+                        {
+                            "name": "",
+                            "visited": true,
+                            "size": 3534
+                        },
+                        {
+                            "name": "Honda",
+                            "children": [
+                                {
+                                    "name": "CRV",
+                                    "size": 3534
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
