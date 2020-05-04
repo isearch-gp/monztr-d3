@@ -1,5 +1,5 @@
 {
-  "name": "ngprojectd3",
+  "name": "monztr-d3",
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "ng build --prod --base-href /monztr-d3/ && npx ngh --dir=dist/ --no-silent"
+    "deploy2": "ng build --prod --base-href /monztr-d3/ && npx ngh --dir=dist/ngProjectD3 --no-silent",
+    "deploy3": "ng build --prod --base-href /monztr-d3/ && npx ngh --dir=dist/ngProjectD3/ --no-silent",
+    "deploy4": "ng build --prod --base-href / && npx ngh --dir=dist/ngProjectD3/ --no-silent",
+    "deploy5": "ng build --prod --base-href /monztr-d3/ngProjectD3/ && npx ngh --dir=dist/ngProjectD3/ --no-silent",
+    "deploy": "ng build --prod --base-href /monztr-d3/ && npx ngh --dir=dist/ngProjectD3/ --no-silent"
   },
   "private": true,
   "dependencies": {
