@@ -158,7 +158,7 @@ export class TreeComponentComponent implements OnInit {
       links = this.tree.links(nodes);
     // Normalize for fixed-depth.
     nodes.forEach((n: any) => {
-      n.y = n.depth * 180;
+      n.y = n.depth * 270;
     });
 
     // Update the nodes…
@@ -191,17 +191,19 @@ export class TreeComponentComponent implements OnInit {
 
     nodeEnter.append("svg:text")
       .attr("dy", ".35em")
-      .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
       .attr("id", function (d) { return 'text' + d.id; })
-      .style("text-anchor", "middle")
+      .style("text-anchor", "start")
       .style("dominant-baseline", "alphabetic")
       .text(function (d) { return d.name; })
       .style("fill-opacity", 1e-6)
 
     let self = this;
     nodeEnter.selectAll('text')
-      .attr('x', function (d) { return self.getBox('circle' + d.id).getBBox().width + -20; })
-      .attr('y', function (d) { return self.getBox('circle' + d.id).getBBox().height + -45; });
+      .attr('x', function (d) { 
+        var circleWidth = self.getBox('circle' + d.id).getBBox().width;
+        return circleWidth + 30;
+      })
+      .attr('y', function (d) { return self.getBox('circle' + d.id).getBBox().height; });
 
     nodeEnter.selectAll('rect')
       .attr('width', function (d) {
