@@ -185,7 +185,8 @@ export class TreeComponentComponent implements OnInit {
     nodeEnter.append("svg:image")
       .attr("xlink:href",  function(d) {
           if (d.flag)
-            return "../../assets/green_flag.png"
+	  //return "../../assets/green_flag.png"
+	  return "assets/green_flag.png"
       })
       .attr("x", - 20 )
       .attr("y", -25 )
