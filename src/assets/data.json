@@ -1,5 +1,6 @@
 {
     "name": "A1-Cars",
+    "flag": false,
     "usechildren": [
         {
             "name": "test"
@@ -8,11 +9,13 @@
     "children": [
         {
             "name": "B1-Auto trade",
+            "flag": true,
             "children": [
                 {
                     "name": "C1",
                     "visited": true,
-                    "size": 3534
+                    "size": 3534,
+                    "flag": false
                 },
                 {
                     "name": "C2",
@@ -21,10 +24,12 @@
                 },
                 {
                     "name": "C3-SUVs",
+                    "flag": false,
                     "children": [
                         {
                             "name": "D1-Ford",
-                            "size": 3534
+                            "size": 3534,
+                            "flag": true
                         },
                         {
                             "name": "D2",
@@ -41,7 +46,8 @@
                             "children": [
                                 {
                                     "name": "E1-CRV",
-                                    "size": 3534
+                                    "size": 3534,
+                                    "flag": true
                                 }
                             ]
                         }

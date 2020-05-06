@@ -182,6 +182,17 @@ export class TreeComponentComponent implements OnInit {
       .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
       .on("click", this.clickedEvt);
 
+    nodeEnter.append("svg:image")
+      .attr("xlink:href",  function(d) {
+          if (d.flag)
+            return "../../assets/green_flag.png"
+      })
+      .attr("x", - 20 )
+      .attr("y", -25 )
+      .attr("height", 50)
+      .attr("width", 50)
+      .on("click", this.clickedEvt);
+
     nodeEnter.append("svg:rect")
       .attr('style', 'fill: #c8f26d;')
       .attr('stroke', '#f49f16')
