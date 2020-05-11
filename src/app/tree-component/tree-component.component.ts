@@ -16,12 +16,16 @@ export class TreeComponentComponent implements OnInit {
   svg: any;
   root: any;
   treemap = d3.tree().size([this.height, this.width]);
-  duration = 750;
+  duration = 350;
   i = 0;
+  isToggle: boolean = true;
 
   constructor(public api: ApiService) { }
 
   ngOnInit() {
+    this.initTree(true)
+  }
+  initTree(isExapand) {
     this.svg = d3.select("#body").append("svg")
       .attr("width", this.width + this.margin.right + this.margin.left)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
@@ -34,22 +38,31 @@ export class TreeComponentComponent implements OnInit {
       this.root = d3.hierarchy(this.treeData, function (d) { return d.children; });
       this.root.x0 = this.height / 2;
       this.root.y0 = 0;
-      this.root.children.forEach(function collapse(d) {
-        if (d.children) {
-          d._children = d.children
-          d._children.forEach(collapse)
-          d.children = null
-        }
-      });
+      if (isExapand)
+        this.root.children.forEach(this.collapse);
       this.update(this.root, true);
     });
   }
-  
+  collapse(d) {
+    function collapse(d) {
+      if (d.children) {
+        d._children = d.children
+        d._children.forEach(collapse)
+        d.children = null
+      }
+    }
+    collapse(d)
+  }
+  expanCollapse(data) {
+    d3.select("#body").select("svg").remove();
+    this.initTree(data)
+  }
+
   update(source: any, selected: boolean) {
     let self = this;
     let treeData = self.treemap(self.root);
     let nodes = treeData.descendants();
-    let links = treeData.descendants().slice(1);   
+    let links = treeData.descendants().slice(1);
 
     nodes.forEach(function (d) { d.y = d.depth * 270 });
 
@@ -68,7 +81,7 @@ export class TreeComponentComponent implements OnInit {
       .attr("r", 1e-6)
       .attr("id", function (d) { return 'circle' + d.id })
       .attr("style", "stroke: #0000FF; stroke-width: 3; cursor: pointer")
-      .on('click', function(d){ self.toggle(d); });
+      .on('click', function (d) { toggle(d); });
 
     nodeEnter.append("svg:image")
       .attr("xlink:href", function (d) { return d.data.flag ? "assets/green_flag.png" : null; })
@@ -77,7 +90,7 @@ export class TreeComponentComponent implements OnInit {
       .attr("height", 50)
       .attr("width", 50)
       .style("cursor", "pointer")
-      .on('click', function(d){ self.toggle(d); });
+      .on('click', function (d) { toggle(d); });
 
     nodeEnter.append("svg:rect")
       .attr('style', 'fill: #c8f26d;')
@@ -188,24 +201,35 @@ export class TreeComponentComponent implements OnInit {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-  }
-  
-  toggle(d: any) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
-    }
-    this.clickedEvt(d);
-    this.update(d, true);
-  }
+    function toggle(d) {
+      self.clickedEvt(d)
+      function nodeEvt(d) {
+        if (self.selectedNode && self.selectedNode.parent == d){
+          return false;
+        }
+        return true
+      }
+      if (self.selectedNode != d && nodeEvt(d))
+        d.parent.children.forEach(self.collapse)
 
+      if (d.children) {
+        d._children = d.children;
+        d.children = null;
+      } else {
+        d.children = d._children;
+        d._children = null;
+      }
+      self.selectedNode = d
+
+      self.update(d, true);
+
+    }
+  }
+  public selectedNode: any;
   getBox(d: any): any {
     return document.getElementById(d)
   }
-  
+
   clickedEvt(data: any) {
     console.log("Clicked Data: ", data);
   }
