@@ -18,30 +18,34 @@ export class TreeComponentComponent implements OnInit {
   treemap = d3.tree().size([this.height, this.width]);
   duration = 350;
   i = 0;
-  isToggle: boolean = true;
+  isCollapse: boolean = true;
 
   constructor(public api: ApiService) { }
 
   ngOnInit() {
-    this.initTree(true)
+    this.api.getJSON().subscribe(data => {
+      this.treeData = data;      
+      this.initTree();
+    });
+    
   }
-  initTree(isExapand) {
+  initTree() {
+    d3.select("#body").select("svg").remove();
+
     this.svg = d3.select("#body").append("svg")
       .attr("width", this.width + this.margin.right + this.margin.left)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
       .append("g")
       .attr("transform", "translate("
         + this.margin.left + "," + this.margin.top + ")");
+    
+    this.root = d3.hierarchy(this.treeData, function (d) { return d.children; });
+    this.root.x0 = this.height / 2;
+    this.root.y0 = 0;
 
-    this.api.getJSON().subscribe(data => {
-      this.treeData = data;
-      this.root = d3.hierarchy(this.treeData, function (d) { return d.children; });
-      this.root.x0 = this.height / 2;
-      this.root.y0 = 0;
-      if (isExapand)
-        this.root.children.forEach(this.collapse);
-      this.update(this.root, true);
-    });
+    if (this.isCollapse)
+      this.root.children.forEach(this.collapse);
+    this.update(this.root, true);
   }
   collapse(d) {
     function collapse(d) {
@@ -53,9 +57,9 @@ export class TreeComponentComponent implements OnInit {
     }
     collapse(d)
   }
-  expanCollapse(data) {
-    d3.select("#body").select("svg").remove();
-    this.initTree(data)
+  expandCollapse() {
+    this.isCollapse = !this.isCollapse;
+    this.initTree()
   }
 
   update(source: any, selected: boolean) {
@@ -73,6 +77,7 @@ export class TreeComponentComponent implements OnInit {
       .attr('class', 'node')
       .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
       .on("click", function (d) {
+        self.isCollapse = true;
         d3.selectAll("line").remove()
         self.update(d, true);
       });
@@ -110,9 +115,13 @@ export class TreeComponentComponent implements OnInit {
     nodeEnter.selectAll('text')
       .attr('x', function (d) {
         let circleWidth = self.getBox('circle' + d.id).getBBox().width;
-        return circleWidth + 30;
+        let val = self.isCollapse ? -25 : 30;
+        return circleWidth + val;
       })
-      .attr('y', function (d) { return self.getBox('circle' + d.id).getBBox().height; });
+      .attr('y', function (d) {
+        let val = self.isCollapse ? -45 : 0;
+        return self.getBox('circle' + d.id).getBBox().height + val;
+      });
 
     nodeEnter.selectAll('rect')
       .attr('width', function (d) {
@@ -203,26 +212,18 @@ export class TreeComponentComponent implements OnInit {
     });
     function toggle(d) {
       self.clickedEvt(d)
-      function nodeEvt(d) {
-        if (self.selectedNode && self.selectedNode.parent == d){
-          return false;
-        }
-        return true
-      }
-      if (self.selectedNode != d && nodeEvt(d))
-        d.parent.children.forEach(self.collapse)
-
       if (d.children) {
         d._children = d.children;
         d.children = null;
       } else {
+        if (d.parent && d.parent.children)
+          d.parent.children.forEach(self.collapse)
         d.children = d._children;
         d._children = null;
+        d.children.forEach(self.collapse);
       }
       self.selectedNode = d
-
       self.update(d, true);
-
     }
   }
   public selectedNode: any;
